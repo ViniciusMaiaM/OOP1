@@ -8,7 +8,7 @@ void main(){
     print(engradado);
     print("Preço total item: ${engradado.total()}");
 
-    Venda venda = new Venda(DateTime.now(),[engradado]);
+    Venda venda = new Venda(DateTime.now());
     venda.setItem(2, banana);
     print(venda);
     print("Preço total: ${venda.total()}");
@@ -16,13 +16,13 @@ void main(){
 
 class Venda{
     final DateTime data;
-    final List<Item> itens;
+    List<Item> itens = [];
 
     double total(){
         return itens.fold(0,(soma,elemento) => soma + elemento.total());
     }
 
-    Venda(this.data, this.itens);
+    Venda(this.data);
     
     void setItem(double quantidade, Produto produto){
         Item item = Item( quantidade,  produto);
