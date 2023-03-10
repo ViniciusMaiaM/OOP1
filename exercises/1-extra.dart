@@ -1,17 +1,15 @@
 void main(){
     Produto cerveja = new Produto(10.50,"Cerveja",DateTime.now());
     Produto banana = new Produto(2.00,"Banana",DateTime.now());
-    print(cerveja);
-    print(banana);
     
     Item engradado = new Item(2, cerveja);
-    print(engradado);
-    print("Preço total item: ${engradado.total()}");
+    Item penca = new Item(4, banana);
+
 
     Venda venda = new Venda(DateTime.now());
-    venda.setItem(2, banana);
+    venda.addItem(penca);
+    venda.addItem(engradado);
     print(venda);
-    print("Preço total: ${venda.total()}");
 }
 
 class Venda{
@@ -29,8 +27,12 @@ class Venda{
         itens.add(item);
     }
 
+    void addItem(Item item){
+        itens.add(item);
+    }
+
     @override
-    String toString() => "\nData: ${this.data} \n Itens: ${this.itens}";
+    String toString() => "\nData: ${this.data} \n Itens: (\n${this.itens}\n) \n Total item: ${this.total()}";
 }
 
 class Item{
@@ -44,7 +46,7 @@ class Item{
     Item(this.quantidade, this.prod);
 
     @override
-    String toString() => "\nQuantidade: ${this.quantidade} \n Produtos: ${this.prod}";
+    String toString() => "\nQuantidade: ${this.quantidade} \n (Produto: ${this.prod}) Preço total: ${this.total()}\n";
 }
 
 class Produto{
@@ -55,5 +57,5 @@ class Produto{
     Produto(this.preco, this.desc, this.data);
 
     @override
-    String toString() => "\nPreco: ${this.preco} \n Desc: ${this.desc} \n Data: ${this.data}";
+    String toString() => "Preco: ${this.preco} \n Desc: ${this.desc} \n Data: ${this.data}\n";
 }
