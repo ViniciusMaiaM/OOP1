@@ -1,12 +1,13 @@
 void main(){
-    Produto cerveja = new Produto(10.50,"Cerveja",DateTime.now());
-    Produto banana = new Produto(2.00,"Banana",DateTime.now());
+    Produto cerveja = new Produto(preco: 10.50,desc: "Cerveja",data: DateTime.now());
+    Produto banana = new Produto(preco: 2.00,desc: "Banana",data: DateTime.now());
     
-    Item engradado = new Item(2, cerveja);
-    Item penca = new Item(4, banana);
+    Item engradado = new Item(quantidade: 2, prod: cerveja);
+    Item penca = new Item(quantidade: 4, prod: banana);
 
 
     Venda venda = new Venda(DateTime.now());
+    // O item deve ser adicionado a lista utilizando a função
     venda.addItem(penca);
     venda.addItem(engradado);
     print(venda);
@@ -16,23 +17,17 @@ class Venda{
     final DateTime data;
     List<Item> itens = [];
 
-    double total(){
-        return itens.fold(0,(soma,elemento) => soma + elemento.total());
-    }
+    double total() => itens.fold(0,(soma,elemento) => soma + elemento.total());
+    
 
     Venda(this.data);
-    
-    void setItem(double quantidade, Produto produto){
-        Item item = Item( quantidade,  produto);
-        itens.add(item);
-    }
 
     void addItem(Item item){
         itens.add(item);
     }
 
     @override
-    String toString() => "\nData: ${this.data} \n Itens: (\n${this.itens}\n) \n Total item: ${this.total()}";
+    String toString() => "\nData: ${this.data} \n Itens: (\n${this.itens}\n) \n Preço total da venda: ${this.total()}";
 }
 
 class Item{
@@ -43,10 +38,10 @@ class Item{
         return quantidade * prod.preco;
     }
 
-    Item(this.quantidade, this.prod);
+    Item({required double this.quantidade, required Produto this.prod});
 
     @override
-    String toString() => "\nQuantidade: ${this.quantidade} \n (Produto: ${this.prod}) Preço total: ${this.total()}\n";
+    String toString() => "\nQuantidade: ${this.quantidade} \n (Produto: ${this.prod}) Preço total do item: ${this.total()}\n -____________________________-";
 }
 
 class Produto{
@@ -54,8 +49,8 @@ class Produto{
     final String desc;
     final DateTime data;
 
-    Produto(this.preco, this.desc, this.data);
+    Produto({required double this.preco, required String this.desc, required DateTime this.data});
 
     @override
-    String toString() => "Preco: ${this.preco} \n Desc: ${this.desc} \n Data: ${this.data}\n";
+    String toString() => "Preco do produto: ${this.preco} \n Desc: ${this.desc} \n Data: ${this.data}\n";
 }
