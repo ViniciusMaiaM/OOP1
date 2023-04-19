@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 
 void main() {
   MyApp app = MyApp();
-
   runApp(app);
 }
 
@@ -14,35 +13,30 @@ class MyApp extends StatelessWidget {
         debugShowCheckedModeBanner: false,
         home: Scaffold(
           appBar: MyAppBar(),
-          body: DataBodyWidget(objects: [
+          body: DataBodyWidget(objects: const [
             "La Fin Du Monde - Bock - 65 ibu",
             "Sapporo Premiume - Sour Ale - 54 ibu",
             "Duvel - Pilsner - 82 ibu"
           ]),
-          bottomNavigationBar: NewNavBar(icons: [
-            Icon(Icons.abc),
-            Icon(Icons.ac_unit),
-            Icon(Icons.access_alarm),
-            Icon(Icons.accessibility)
+          bottomNavigationBar: NewNavBar(icons: const [
+            Icons.ac_unit,
+            Icons.access_alarm,
+            Icons.accessibility
           ]),
         ));
   }
 }
 
 class NewNavBar extends StatelessWidget {
-  List<Icon> icons;
-  NewNavBar({this.icons = const []});
-
-  void touchedButton(int index) {
-    print("Touched: $index");
-  }
+  final List icons;
+  NewNavBar({required this.icons});
 
   @override
   Widget build(BuildContext context) {
     return BottomNavigationBar(
-        onTap: touchedButton,
         items: icons
-            .map((e) => BottomNavigationBarItem(icon: e, label: "Teste"))
+            .map((data) =>
+                BottomNavigationBarItem(icon: Icon(data), label: "Teste"))
             .toList());
   }
 }
@@ -70,7 +64,11 @@ class DataBodyWidget extends StatelessWidget {
 }
 
 class MyAppBar extends StatelessWidget implements PreferredSizeWidget {
-  Size get preferredSize => new Size.fromHeight(kToolbarHeight);
+  @override
+  Size get preferredSize => const Size.fromHeight(kToolbarHeight);
+
+  Colors? selected;
+
   @override
   Widget build(BuildContext context) {
     return AppBar(
@@ -80,7 +78,7 @@ class MyAppBar extends StatelessWidget implements PreferredSizeWidget {
             onSelected: (value) {
               // TODO: Later add the color change functionality
             },
-            itemBuilder: (context) => [
+            itemBuilder: (context) => const [
                   PopupMenuItem(
                     value: Colors.black,
                     child: Text("Black"),
