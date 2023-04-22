@@ -35,7 +35,8 @@ class MyApp extends StatelessWidget {
           appBar: AppBar(
             title: const Text("Dicas"),
           ),
-          body: MytileWidget(objects: dataObjects),
+          body: MytileWidget(
+              objects: dataObjects, propertyNames: ['Style', 'Ibu']),
           bottomNavigationBar: NewNavBar(),
         ));
   }
@@ -64,18 +65,20 @@ class NewNavBar extends StatelessWidget {
 
 class DataBodyWidget extends StatelessWidget {
   List objects;
+  List propertyNames;
+  List collumnNames;
 
-  DataBodyWidget({this.objects = const []});
+  DataBodyWidget(
+      {this.objects = const [],
+      this.propertyNames = const [],
+      this.collumnNames = const []});
 
   @override
   Widget build(BuildContext context) {
-    var columnNames = ["Nome", "Estilo", "IBU"],
-        propertyNames = ["name", "style", "ibu"];
-
     return ListView(
       children: [
         DataTable(
-            columns: columnNames
+            columns: collumnNames
                 .map((name) => DataColumn(
                     label: Expanded(
                         child: Text(name,
@@ -94,8 +97,9 @@ class DataBodyWidget extends StatelessWidget {
 
 class MytileWidget extends StatelessWidget {
   List objects;
+  List propertyNames;
 
-  MytileWidget({this.objects = const []});
+  MytileWidget({this.objects = const [], this.propertyNames = const []});
 
   @override
   Widget build(BuildContext context) {
@@ -106,7 +110,7 @@ class MytileWidget extends StatelessWidget {
             child: ListTile(
               title: Text(objects[index]["name"]),
               subtitle: Text(
-                  "Estilo: ${objects[index]["style"]}, IBU: ${objects[index]["ibu"]}"),
+                  "${propertyNames[0]}: ${objects[index]["style"]}, IBU: ${objects[1]["ibu"]}"),
             ),
           );
         });
