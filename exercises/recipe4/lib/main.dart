@@ -35,7 +35,7 @@ class MyApp extends StatelessWidget {
           appBar: AppBar(
             title: const Text("Dicas"),
           ),
-          body: DataBodyWidget(objects: dataObjects),
+          body: MytileWidget(objects: dataObjects),
           bottomNavigationBar: NewNavBar(),
         ));
   }
@@ -89,5 +89,26 @@ class DataBodyWidget extends StatelessWidget {
                 .toList())
       ],
     );
+  }
+}
+
+class MytileWidget extends StatelessWidget {
+  List objects;
+
+  MytileWidget({this.objects = const []});
+
+  @override
+  Widget build(BuildContext context) {
+    return ListView.builder(
+        itemCount: objects.length,
+        itemBuilder: (BuildContext context, int index) {
+          return Card(
+            child: ListTile(
+              title: Text(objects[index]["name"]),
+              subtitle: Text(
+                  "Estilo: ${objects[index]["style"]}, IBU: ${objects[index]["ibu"]}"),
+            ),
+          );
+        });
   }
 }
