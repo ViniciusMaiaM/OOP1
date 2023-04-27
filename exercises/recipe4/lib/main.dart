@@ -110,7 +110,7 @@ class MytileWidget extends StatelessWidget {
             child: ListTile(
               title: Text(objects[index]["name"]),
               subtitle: Text(
-                  "${propertyNames[0]}: ${objects[index]["style"]}, IBU: ${objects[1]["ibu"]}"),
+                  "${propertyNames[0]}: ${objects[index]["style"]}, IBU: ${objects[index]["ibu"]}"),
             ),
           );
         });
