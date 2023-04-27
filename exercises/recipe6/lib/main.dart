@@ -11,105 +11,213 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        // This is the theme of your application.
-        //
-        // Try running your application with "flutter run". You'll see the
-        // application has a blue toolbar. Then, without quitting the app, try
-        // changing the primarySwatch below to Colors.green and then invoke
-        // "hot reload" (press "r" in the console where you ran "flutter run",
-        // or simply save your changes to "hot reload" in a Flutter IDE).
-        // Notice that the counter didn't reset back to zero; the application
-        // is not restarted.
-        primarySwatch: Colors.blue,
+        theme: ThemeData(primarySwatch: Colors.deepPurple),
+        debugShowCheckedModeBanner: false,
+        home: Scaffold(
+          appBar: AppBar(
+            title: const Text("Inputs"),
+          ),
+          body: const MyCustomForm(),
+          bottomNavigationBar: NewNavBar(icons: const [
+            Icons.ac_unit,
+            Icons.access_alarm,
+            Icons.accessibility
+          ]),
+        ));
+  }
+}
+
+class NewNavBar extends StatelessWidget {
+  final List icons;
+  NewNavBar({required this.icons});
+
+  @override
+  Widget build(BuildContext context) {
+    return BottomNavigationBar(
+        items: icons
+            .map((data) =>
+                BottomNavigationBarItem(icon: Icon(data), label: "Teste"))
+            .toList());
+  }
+}
+
+class MyCustomForm extends StatefulWidget {
+  const MyCustomForm({super.key});
+
+  @override
+  MyCustomFormState createState() {
+    return MyCustomFormState();
+  }
+}
+
+// Create a corresponding State class.
+// This class holds data related to the form.
+class MyCustomFormState extends State<MyCustomForm> {
+  final _formKey = GlobalKey<FormState>();
+
+  @override
+  Widget build(BuildContext context) {
+    return Form(
+      key: _formKey,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          // Creating the input field for the name
+          Padding(
+            padding: const EdgeInsets.all(16.0), // Add padding here
+            child: MyNameInput(),
+          ),
+          // Creating the input field for the password
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: MyPasswordInput(),
+          ),
+          // Creating the DropdownButton field
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: MyDropdownInput(),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: MySlideInput(),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(15.0),
+            child: ElevatedButton(
+              onPressed: () {
+                if (_formKey.currentState!.validate()) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text('It all works"')),
+                  );
+                }
+              },
+              child: const Text('Submit'),
+            ),
+          ),
+        ],
       ),
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
     );
   }
 }
 
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key, required this.title});
-
-  // This widget is the home page of your application. It is stateful, meaning
-  // that it has a State object (defined below) that contains fields that affect
-  // how it looks.
-
-  // This class is the configuration for the state. It holds the values (in this
-  // case the title) provided by the parent (in this case the App widget) and
-  // used by the build method of the State. Fields in a Widget subclass are
-  // always marked "final".
-
-  final String title;
-
-  @override
-  State<MyHomePage> createState() => _MyHomePageState();
-}
-
-class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
-
-  void _incrementCounter() {
-    setState(() {
-      // This call to setState tells the Flutter framework that something has
-      // changed in this State, which causes it to rerun the build method below
-      // so that the display can reflect the updated values. If we changed
-      // _counter without calling setState(), then the build method would not be
-      // called again, and so nothing would appear to happen.
-      _counter++;
-    });
-  }
+class MyNameInput extends StatelessWidget {
+  MyNameInput();
 
   @override
   Widget build(BuildContext context) {
-    // This method is rerun every time setState is called, for instance as done
-    // by the _incrementCounter method above.
-    //
-    // The Flutter framework has been optimized to make rerunning build methods
-    // fast, so that you can just rebuild anything that needs updating rather
-    // than having to individually change instances of widgets.
-    return Scaffold(
-      appBar: AppBar(
-        // Here we take the value from the MyHomePage object that was created by
-        // the App.build method, and use it to set our appbar title.
-        title: Text(widget.title),
+    return TextFormField(
+      validator: (value) {
+        String patttern = r'(^[a-zA-Z ]*$)';
+        RegExp regExp = RegExp(patttern);
+        if (value == null || value.isEmpty) {
+          return "Please input your name";
+        } else if (!regExp.hasMatch(value)) {
+          return "O nome deve conter caracteres de a-z ou A-Z";
+        }
+      },
+      decoration: const InputDecoration(
+        border: OutlineInputBorder(),
+        labelText: 'Enter text here',
       ),
-      body: Center(
-        // Center is a layout widget. It takes a single child and positions it
-        // in the middle of the parent.
-        child: Column(
-          // Column is also a layout widget. It takes a list of children and
-          // arranges them vertically. By default, it sizes itself to fit its
-          // children horizontally, and tries to be as tall as its parent.
-          //
-          // Invoke "debug painting" (press "p" in the console, choose the
-          // "Toggle Debug Paint" action from the Flutter Inspector in Android
-          // Studio, or the "Toggle Debug Paint" command in Visual Studio Code)
-          // to see the wireframe for each widget.
-          //
-          // Column has various properties to control how it sizes itself and
-          // how it positions its children. Here we use mainAxisAlignment to
-          // center the children vertically; the main axis here is the vertical
-          // axis because Columns are vertical (the cross axis would be
-          // horizontal).
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            const Text(
-              'You have pushed the button this many times:',
-            ),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.headlineMedium,
-            ),
-          ],
+    );
+  }
+}
+
+class MyPasswordInput extends StatefulWidget {
+  @override
+  _MyPasswordInputState createState() => _MyPasswordInputState();
+}
+
+class _MyPasswordInputState extends State<MyPasswordInput> {
+  bool showPassword = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return TextFormField(
+      validator: (value) {
+        if (value == null || value.isEmpty) {
+          return 'Please enter a passport';
+        }
+        return null;
+      },
+      obscureText: !showPassword,
+      decoration: InputDecoration(
+        border: const OutlineInputBorder(),
+        labelText: 'Enter passport here',
+        hintText: 'Enter your password',
+        suffixIcon: IconButton(
+          icon: Icon(
+            showPassword ? Icons.visibility : Icons.visibility_off,
+          ),
+          onPressed: () {
+            setState(() {
+              showPassword = !showPassword;
+            });
+          },
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
+    );
+  }
+}
+
+class MyDropdownInput extends StatefulWidget {
+  @override
+  _MyDropdownInputState createState() => _MyDropdownInputState();
+}
+
+class _MyDropdownInputState extends State<MyDropdownInput> {
+  String? _opcao;
+
+  @override
+  Widget build(BuildContext context) {
+    return DropdownButtonFormField<String>(
+      decoration: const InputDecoration(labelText: 'Role'),
+      value: _opcao,
+      onChanged: (newValue) {
+        setState(() {
+          _opcao = newValue;
+        });
+      },
+      items: const [
+        DropdownMenuItem(
+          value: 'Back-End',
+          child: Text('Back-End'),
+        ),
+        DropdownMenuItem(
+          value: 'Front-End',
+          child: Text('Front-End'),
+        ),
+      ],
+      validator: (value) {
+        if (value == null) {
+          return 'Please select a option';
+        }
+        return null;
+      },
+    );
+  }
+}
+
+class MySlideInput extends StatefulWidget {
+  @override
+  _MySlideInputState createState() => _MySlideInputState();
+}
+
+class _MySlideInputState extends State<MySlideInput> {
+  double _curentSliderValue = 0;
+
+  @override
+  Widget build(BuildContext context) {
+    return Slider(
+      value: _curentSliderValue,
+      max: 100,
+      divisions: 5,
+      label: _curentSliderValue.round().toString(),
+      onChanged: (double newValue) {
+        setState(() {
+          _curentSliderValue = newValue;
+        });
+      },
     );
   }
 }
