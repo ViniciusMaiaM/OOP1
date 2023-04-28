@@ -2,7 +2,25 @@ import 'package:flutter/material.dart';
 
 import 'package:flutter_hooks/flutter_hooks.dart';
 
-var dataObjects = [];
+class DataService {
+  final ValueNotifier<List> tableStateNotifier = new ValueNotifier([]);
+
+  void carregar(index) {
+    if (index == 1) carregarCervejas();
+  }
+
+  void carregarCervejas() {
+    tableStateNotifier.value = [
+      {"name": "La Fin Du Monde", "style": "Bock", "ibu": "65"},
+      {"name": "Sapporo Premiume", "style": "Sour Ale", "ibu": "54"},
+      {"name": "Duvel", "style": "Pilsner", "ibu": "82"}
+    ];
+  }
+}
+
+final dataService = DataService();
+
+//var dataObjects = [];
 
 void main() {
   MyApp app = MyApp();
@@ -20,14 +38,27 @@ class MyApp extends StatelessWidget {
           appBar: AppBar(
             title: const Text("Dicas"),
           ),
-          body: DataTableWidget(jsonObjects: dataObjects),
-          bottomNavigationBar: NewNavBar(),
+          body: ValueListenableBuilder(
+              valueListenable: dataService.tableStateNotifier,
+              builder: (_, value, __) {
+                return DataTableWidget(
+                    jsonObjects: value,
+                    propertyNames: ["name", "style", "ibu"],
+                    columnNames: ["Nome", "Estilo", "IBU"]);
+              }),
+          bottomNavigationBar:
+              NewNavBar(itemSelectedCallback: dataService.carregar),
         ));
   }
 }
 
 class NewNavBar extends HookWidget {
-  NewNavBar();
+  var itemSelectedCallback;
+  // Function to create relationship between the class and the 'carregarCervejas'
+
+  NewNavBar({this.itemSelectedCallback}) {
+    itemSelectedCallback ??= (_) {};
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -36,6 +67,7 @@ class NewNavBar extends HookWidget {
     return BottomNavigationBar(
         onTap: (index) {
           state.value = index;
+          itemSelectedCallback(index);
         },
         currentIndex: state.value,
         items: const [
