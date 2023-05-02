@@ -9,12 +9,17 @@ class DataService {
 
   DataService()
       : tableStateNotifier = ValueNotifier([
-          {"name": "Café Brasileiro", "origin": "Brasil", "roast": "Médio"},
-          {"name": "Café Colombiano", "origin": "Colômbia", "roast": "Escuro"},
-          {"name": "Café Etíope", "origin": "Etiópia", "roast": "Claro"}
+          {
+            "name": "Brasil",
+            "capital": "Brasília",
+            "population": "211 million"
+          },
+          {"name": "China", "capital": "Pequim", "population": "1.4 billion"},
+          {"name": "Cuba", "capital": "Havana", "population": "11 million"}
         ]),
-        columnNamesNotifier = ValueNotifier(["Nome", "Origem", "Torra"]),
-        propertyNamesNotifier = ValueNotifier(["name", "origin", "roast"]);
+        columnNamesNotifier = ValueNotifier(["Nome", "Capital", "População"]),
+        propertyNamesNotifier =
+            ValueNotifier(["name", "capital", "population"]);
 
   void carregar(int index) {
     final Map<int, Function> carregamentos = {
