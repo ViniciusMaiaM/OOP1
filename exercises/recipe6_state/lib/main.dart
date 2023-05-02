@@ -3,9 +3,18 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 
 class DataService {
-  final ValueNotifier<List> tableStateNotifier = ValueNotifier([]);
-  final ValueNotifier<List<String>> columnNamesNotifier = ValueNotifier([]);
-  final ValueNotifier<List<String>> propertyNamesNotifier = ValueNotifier([]);
+  final ValueNotifier<List> tableStateNotifier;
+  final ValueNotifier<List<String>> columnNamesNotifier;
+  final ValueNotifier<List<String>> propertyNamesNotifier;
+
+  DataService()
+      : tableStateNotifier = ValueNotifier([
+          {"name": "Café Brasileiro", "origin": "Brasil", "roast": "Médio"},
+          {"name": "Café Colombiano", "origin": "Colômbia", "roast": "Escuro"},
+          {"name": "Café Etíope", "origin": "Etiópia", "roast": "Claro"}
+        ]),
+        columnNamesNotifier = ValueNotifier(["Nome", "Origem", "Torra"]),
+        propertyNamesNotifier = ValueNotifier(["name", "origin", "roast"]);
 
   void carregar(int index) {
     final Map<int, Function> carregamentos = {
@@ -49,8 +58,6 @@ class DataService {
 
 final dataService = DataService();
 
-//var dataObjects = [];
-
 void main() {
   MyApp app = MyApp();
 
@@ -70,11 +77,11 @@ class MyApp extends StatelessWidget {
           body: ValueListenableBuilder(
               valueListenable: dataService.tableStateNotifier,
               builder: (_, value, __) {
-                return DataTableWidget(
-                    jsonObjects: value);
+                return DataTableWidget(jsonObjects: value);
               }),
-          bottomNavigationBar:
-              NewNavBar(itemSelectedCallback: dataService.carregar),
+          bottomNavigationBar: NewNavBar(itemSelectedCallback: (index) {
+            dataService.carregar(index + 1);
+          }),
         ));
   }
 }
@@ -99,13 +106,13 @@ class NewNavBar extends HookWidget {
         currentIndex: state.value,
         items: const [
           BottomNavigationBarItem(
+              label: "Cervejas", icon: Icon(Icons.local_drink_outlined)),
+          BottomNavigationBarItem(
             label: "Cafés",
             icon: Icon(Icons.coffee_outlined),
           ),
           BottomNavigationBarItem(
-              label: "Cervejas", icon: Icon(Icons.local_drink_outlined)),
-          BottomNavigationBarItem(
-              label: "Nações", icon: Icon(Icons.flag_outlined))
+              label: "Nações", icon: Icon(Icons.flag_outlined)),
         ]);
   }
 }
