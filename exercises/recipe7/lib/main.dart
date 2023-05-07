@@ -8,6 +8,13 @@ import 'dart:convert';
 
 class DataService {
   final ValueNotifier<List> tableStateNotifier = new ValueNotifier([]);
+  final ValueNotifier<List<String>> columnNamesNotifier = new ValueNotifier([]);
+  final ValueNotifier<List<String>> propertyNamesNotifier =
+      new ValueNotifier([]);
+
+  DataService() {
+    loadBeers();
+  }
 
   void load(index) {
     switch (index) {
@@ -34,6 +41,8 @@ class DataService {
 
     var beersJson = jsonDecode(jsonString);
 
+    propertyNamesNotifier.value = ["name", "brand", "ibu"];
+    columnNamesNotifier.value = ["Name", "Brand", "IBU"];
     tableStateNotifier.value = beersJson;
   }
 
@@ -48,6 +57,8 @@ class DataService {
 
     var coffeesJson = jsonDecode(jsonString);
 
+    propertyNamesNotifier.value = ["blend_name", "origin", "variety"];
+    columnNamesNotifier.value = ["Blend Name", "Origin", "Variety"];
     tableStateNotifier.value = coffeesJson;
   }
 
@@ -62,6 +73,8 @@ class DataService {
 
     var nationsJson = jsonDecode(jsonString);
 
+    columnNamesNotifier.value = ["Nationality", "Language", "Capital"];
+    propertyNamesNotifier.value = ["nationality", "language", "capital"];
     tableStateNotifier.value = nationsJson;
   }
 }
@@ -87,10 +100,7 @@ class MyApp extends StatelessWidget {
           body: ValueListenableBuilder(
               valueListenable: dataService.tableStateNotifier,
               builder: (_, value, __) {
-                return DataTableWidget(
-                    jsonObjects: value,
-                    propertyNames: ["name", "style", "ibu"],
-                    columnNames: ["Nome", "Estilo", "IBU"]);
+                return DataTableWidget(jsonObjects: value);
               }),
           bottomNavigationBar: NewNavBar(itemSelectedCallback: (index) {
             dataService.load(index + 1);
@@ -118,13 +128,13 @@ class NewNavBar extends HookWidget {
         currentIndex: state.value,
         items: const [
           BottomNavigationBarItem(
-            label: "Cafés",
+            label: "Coffes",
             icon: Icon(Icons.coffee_outlined),
           ),
           BottomNavigationBarItem(
-              label: "Cervejas", icon: Icon(Icons.local_drink_outlined)),
+              label: "Beers", icon: Icon(Icons.local_drink_outlined)),
           BottomNavigationBarItem(
-              label: "Nações", icon: Icon(Icons.flag_outlined))
+              label: "Nations", icon: Icon(Icons.flag_outlined))
         ]);
   }
 }
@@ -132,17 +142,12 @@ class NewNavBar extends HookWidget {
 class DataTableWidget extends StatelessWidget {
   final List jsonObjects;
 
-  final List<String> columnNames;
-
-  final List<String> propertyNames;
-
-  DataTableWidget(
-      {this.jsonObjects = const [],
-      this.columnNames = const ["Nome", "Estilo", "IBU"],
-      this.propertyNames = const ["name", "style", "ibu"]});
+  DataTableWidget({required this.jsonObjects});
 
   @override
   Widget build(BuildContext context) {
+    final columnNames = dataService.columnNamesNotifier.value;
+    final propertyNames = dataService.propertyNamesNotifier.value;
     return DataTable(
         columns: columnNames
             .map((name) => DataColumn(
