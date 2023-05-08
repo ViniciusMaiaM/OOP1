@@ -7,14 +7,23 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 
 class DataService {
-  final ValueNotifier<List> tableStateNotifier = new ValueNotifier([]);
-  final ValueNotifier<List<String>> columnNamesNotifier = new ValueNotifier([]);
-  final ValueNotifier<List<String>> propertyNamesNotifier =
-      new ValueNotifier([]);
+  final ValueNotifier<List> tableStateNotifier;
+  final ValueNotifier<List<String>> columnNamesNotifier;
+  final ValueNotifier<List<String>> propertyNamesNotifier;
 
-  DataService() {
-    loadBeers();
-  }
+  int _bodySize = 5;
+
+  DataService()
+      : tableStateNotifier = ValueNotifier([
+          {"name": "La Fin Du Monde", "style": "Bock", "ibu": "65"},
+          {"name": "Sapporo Premiume", "style": "Sour Ale", "ibu": "54"},
+          {"name": "Duvel", "style": "Pilsner", "ibu": "82"},
+          {"name": "Maharaj", "style": "Rolling Rock", "ibu": "19"},
+          {"name": "Edmund Fitzgerald Porter", "style": "Sierra Nevada", "ibu": "49"}
+        ]),
+        columnNamesNotifier = ValueNotifier(["Name", "Style", "IBU"]),
+        propertyNamesNotifier =
+            ValueNotifier(["name", "style", "ibu"]);
 
   void load(index) {
     switch (index) {
@@ -35,7 +44,7 @@ class DataService {
         scheme: 'https',
         host: 'random-data-api.com',
         path: 'api/beer/random_beer',
-        queryParameters: {'size': '5'});
+        queryParameters: {'size': '$_bodySize'});
 
     var jsonString = await http.read(beersUri);
 
@@ -51,7 +60,7 @@ class DataService {
         scheme: 'https',
         host: 'random-data-api.com',
         path: 'api/coffee/random_coffee',
-        queryParameters: {'size': '5'});
+        queryParameters: {'size': '$_bodySize'});
 
     var jsonString = await http.read(coffeesUri);
 
@@ -67,7 +76,7 @@ class DataService {
         scheme: 'https',
         host: 'random-data-api.com',
         path: 'api/nation/random_nation',
-        queryParameters: {'size': '5'});
+        queryParameters: {'size': '$_bodySize'});
 
     var jsonString = await http.read(nationsUri);
 
@@ -76,6 +85,11 @@ class DataService {
     columnNamesNotifier.value = ["Nationality", "Language", "Capital"];
     propertyNamesNotifier.value = ["nationality", "language", "capital"];
     tableStateNotifier.value = nationsJson;
+  }
+
+  void setBodySize(int bodySize) {
+    _bodySize = bodySize;
+    load(2);
   }
 }
 
@@ -96,6 +110,26 @@ class MyApp extends StatelessWidget {
         home: Scaffold(
           appBar: AppBar(
             title: const Text("Dicas"),
+            actions: [
+              PopupMenuButton<int>(
+                  onSelected: (int newSize) {
+                    dataService.setBodySize(newSize);
+                  },
+                  itemBuilder: (BuildContext context) => const [
+                        PopupMenuItem<int>(
+                          value: 5,
+                          child: Text('Body size: 5'),
+                        ),
+                        PopupMenuItem<int>(
+                          value: 10,
+                          child: Text('Body size: 10'),
+                        ),
+                        PopupMenuItem<int>(
+                          value: 15,
+                          child: Text('Body size: 15'),
+                        ),
+                      ]),
+            ],
           ),
           body: ValueListenableBuilder(
               valueListenable: dataService.tableStateNotifier,
@@ -148,18 +182,21 @@ class DataTableWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     final columnNames = dataService.columnNamesNotifier.value;
     final propertyNames = dataService.propertyNamesNotifier.value;
-    return DataTable(
-        columns: columnNames
-            .map((name) => DataColumn(
-                label: Expanded(
-                    child: Text(name,
-                        style: TextStyle(fontStyle: FontStyle.italic)))))
-            .toList(),
-        rows: jsonObjects
-            .map((obj) => DataRow(
-                cells: propertyNames
-                    .map((propName) => DataCell(Text(obj[propName])))
-                    .toList()))
-            .toList());
+    return SingleChildScrollView(
+      scrollDirection: Axis.vertical,
+      child: DataTable(
+          columns: columnNames
+              .map((name) => DataColumn(
+                  label: Expanded(
+                      child: Text(name,
+                          style: TextStyle(fontStyle: FontStyle.italic)))))
+              .toList(),
+          rows: jsonObjects
+              .map((obj) => DataRow(
+                  cells: propertyNames
+                      .map((propName) => DataCell(Text(obj[propName])))
+                      .toList()))
+              .toList()),
+    );
   }
 }
