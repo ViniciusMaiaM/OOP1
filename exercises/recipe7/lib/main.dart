@@ -6,24 +6,19 @@ import 'package:http/http.dart' as http;
 
 import 'dart:convert';
 
+import 'package:flutter_spinkit/flutter_spinkit.dart';
+
 class DataService {
-  final ValueNotifier<List> tableStateNotifier;
-  final ValueNotifier<List<String>> columnNamesNotifier;
-  final ValueNotifier<List<String>> propertyNamesNotifier;
+  final ValueNotifier<List> tableStateNotifier = new ValueNotifier([]);
+  final ValueNotifier<List<String>> columnNamesNotifier = new ValueNotifier([]);
+  final ValueNotifier<List<String>> propertyNamesNotifier =
+      new ValueNotifier([]);
 
   int _bodySize = 5;
 
-  DataService()
-      : tableStateNotifier = ValueNotifier([
-          {"name": "La Fin Du Monde", "style": "Bock", "ibu": "65"},
-          {"name": "Sapporo Premiume", "style": "Sour Ale", "ibu": "54"},
-          {"name": "Duvel", "style": "Pilsner", "ibu": "82"},
-          {"name": "Maharaj", "style": "Rolling Rock", "ibu": "19"},
-          {"name": "Edmund Fitzgerald Porter", "style": "Sierra Nevada", "ibu": "49"}
-        ]),
-        columnNamesNotifier = ValueNotifier(["Name", "Style", "IBU"]),
-        propertyNamesNotifier =
-            ValueNotifier(["name", "style", "ibu"]);
+  DataService() {
+    loadBeers();
+  }
 
   void load(index) {
     switch (index) {
@@ -131,11 +126,19 @@ class MyApp extends StatelessWidget {
                       ]),
             ],
           ),
-          body: ValueListenableBuilder(
-              valueListenable: dataService.tableStateNotifier,
-              builder: (_, value, __) {
-                return DataTableWidget(jsonObjects: value);
-              }),
+          body: Center(
+            child: ValueListenableBuilder(
+                valueListenable: dataService.tableStateNotifier,
+                builder: (_, value, __) {
+                  if (value.isEmpty) {
+                    return const SpinKitCircle(
+                      color: Colors.deepPurple,
+                      size: 50.0,
+                    );
+                  }
+                  return DataTableWidget(jsonObjects: value);
+                }),
+          ),
           bottomNavigationBar: NewNavBar(itemSelectedCallback: (index) {
             dataService.load(index + 1);
           }),
@@ -189,7 +192,8 @@ class DataTableWidget extends StatelessWidget {
               .map((name) => DataColumn(
                   label: Expanded(
                       child: Text(name,
-                          style: TextStyle(fontStyle: FontStyle.italic)))))
+                          style:
+                              const TextStyle(fontStyle: FontStyle.italic)))))
               .toList(),
           rows: jsonObjects
               .map((obj) => DataRow(
