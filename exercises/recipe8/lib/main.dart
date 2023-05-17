@@ -13,7 +13,12 @@ class DataService {
       {'status': TableStatus.idle, 'dataObjects': [], 'columnNames': []});
 
   void carregar(index) {
-    final funcoes = [carregarCafes, carregarCervejas, carregarNacoes];
+    final funcoes = [
+      carregarCafes,
+      carregarCervejas,
+      carregarNacoes,
+      carregarErvas
+    ];
 
     tableStateNotifier.value = {
       'status': TableStatus.loading,
@@ -25,11 +30,56 @@ class DataService {
   }
 
   void carregarCafes() {
-    return;
+    var coffeesUri = Uri(
+        scheme: 'https',
+        host: 'random-data-api.com',
+        path: 'api/coffee/random_coffee',
+        queryParameters: {'size': '5'});
+    try {
+      http.read(coffeesUri).then((jsonString) {
+        var coffeesJson = jsonDecode(jsonString);
+
+        tableStateNotifier.value = {
+          'status': TableStatus.ready,
+          'dataObjects': coffeesJson,
+          'columnNames': ["Blend Name", "Origin", "Variety"],
+          'propertyNames': ["blend_name", "origin", "variety"]
+        };
+      });
+    } catch (err) {
+      tableStateNotifier.value = {
+        'status': TableStatus.error,
+        'dataObjects': [],
+        'columnNames': [],
+      };
+    }
   }
 
-  void carregarNacoes() {
-    return;
+  Future<void> carregarNacoes() async {
+    var nationsUri = Uri(
+        scheme: 'https',
+        host: 'random-data-api.com',
+        path: 'api/nation/random_nation',
+        queryParameters: {'size': '5'});
+
+    try {
+      var jsonString = await http.read(nationsUri);
+
+      var nationsJson = jsonDecode(jsonString);
+
+      tableStateNotifier.value = {
+        'status': TableStatus.ready,
+        'dataObjects': nationsJson,
+        'columnNames': ["Nationality", "Language", "Capital"],
+        'propertyNames': ["nationality", "language", "capital"]
+      };
+    } catch (err) {
+      tableStateNotifier.value = {
+        'status': TableStatus.error,
+        'dataObjects': [],
+        'columnNames': [],
+      };
+    }
   }
 
   void carregarCervejas() {
@@ -39,14 +89,41 @@ class DataService {
         path: 'api/beer/random_beer',
         queryParameters: {'size': '5'});
 
-    http.read(beersUri).then((jsonString) {
-      var beersJson = jsonDecode(jsonString);
+    try {
+      http.read(beersUri).then((jsonString) {
+        var beersJson = jsonDecode(jsonString);
+
+        tableStateNotifier.value = {
+          'status': TableStatus.ready,
+          'dataObjects': beersJson,
+          'columnNames': ["Nome", "Estilo", "IBU"],
+          'propertyNames': ["name", "style", "ibu"]
+        };
+      });
+    } catch (err) {
+      tableStateNotifier.value = {
+        'status': TableStatus.error,
+        'dataObjects': [],
+        'columnNames': [],
+      };
+    }
+  }
+
+  void carregarErvas() {
+    var cannabisUri = Uri(
+        scheme: 'https',
+        host: 'random-data-api.com',
+        path: 'api/cannabis/random_cannabis',
+        queryParameters: {'size': '5'});
+
+    http.read(cannabisUri).then((jsonString) {
+      var cannabisJson = jsonDecode(jsonString);
 
       tableStateNotifier.value = {
         'status': TableStatus.ready,
-        'dataObjects': beersJson,
-        'columnNames': ["Nome", "Estilo", "IBU"],
-        'propertyNames': ["name", "style", "ibu"]
+        'dataObjects': cannabisJson,
+        'columnNames': ["Strain", "Health Benefits", "Category"],
+        'propertyNames': ["strain", "health_benefit", "category"]
       };
     });
   }
@@ -79,11 +156,16 @@ class MyApp extends StatelessWidget {
                   builder: (_, value, __) {
                     switch (value['status']) {
                       case TableStatus.idle:
-                        return const Text(
-                          "Bem-vindo ao meu aplicativo! Toque um dos botões abaixo para começar.",
-                          style: TextStyle(fontSize: 18.0),
-                          textAlign: TextAlign.center,
-                        );
+                        return Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: const [
+                              Text(
+                                "Bem-vindo ao meu aplicativo! Toque um dos botões abaixo para começar",
+                                style: TextStyle(fontSize: 14.0),
+                                textAlign: TextAlign.center,
+                              ),
+                              Icon(Icons.keyboard_double_arrow_down)
+                            ]);
 
                       case TableStatus.loading:
                         return CircularProgressIndicator();
@@ -95,7 +177,16 @@ class MyApp extends StatelessWidget {
                             columnNames: value['columnNames']);
 
                       case TableStatus.error:
-                        return Text("Lascou");
+                        return Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: const [
+                              Text(
+                                "Lascou",
+                                style: TextStyle(fontSize: 14.0),
+                                textAlign: TextAlign.center,
+                              ),
+                              Icon(Icons.error)
+                            ]);
                     }
 
                     return Text("...");
@@ -133,7 +224,8 @@ class NewNavBar extends HookWidget {
           BottomNavigationBarItem(
               label: "Cervejas", icon: Icon(Icons.local_drink_outlined)),
           BottomNavigationBarItem(
-              label: "Nações", icon: Icon(Icons.flag_outlined))
+              label: "Nações", icon: Icon(Icons.flag_outlined)),
+          BottomNavigationBarItem(label: "Erva", icon: Icon(Icons.forest))
         ]);
   }
 }
@@ -155,6 +247,10 @@ class DataTableWidget extends StatelessWidget {
     return DataTable(
         columns: columnNames
             .map((name) => DataColumn(
+              // onSort: (index, isAscending){
+              //   final compare
+              // }
+              // ,
                 label: Expanded(
                     child: Text(name,
                         style: TextStyle(fontStyle: FontStyle.italic)))))
