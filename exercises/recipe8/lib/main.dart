@@ -210,6 +210,7 @@ class NewNavBar extends HookWidget {
     var state = useState(1);
 
     return BottomNavigationBar(
+        type: BottomNavigationBarType.fixed,
         onTap: (index) {
           state.value = index;
 
@@ -230,7 +231,7 @@ class NewNavBar extends HookWidget {
   }
 }
 
-class DataTableWidget extends StatelessWidget {
+class DataTableWidget extends HookWidget {
   final List jsonObjects;
 
   final List<String> columnNames;
@@ -242,24 +243,47 @@ class DataTableWidget extends StatelessWidget {
       this.columnNames = const ["Nome", "Estilo", "IBU"],
       this.propertyNames = const ["name", "style", "ibu"]});
 
+  dynamic _compareMaker(String property, bool asc) {
+    return asc
+        ? (a, b) => a[property].compareTo(b[property]) as int
+        : (a, b) => b[property].compareTo(a[property]) as int;
+  }
+
   @override
   Widget build(BuildContext context) {
-    return DataTable(
-        columns: columnNames
-            .map((name) => DataColumn(
-              // onSort: (index, isAscending){
-              //   final compare
-              // }
-              // ,
-                label: Expanded(
-                    child: Text(name,
-                        style: TextStyle(fontStyle: FontStyle.italic)))))
-            .toList(),
-        rows: jsonObjects
-            .map((obj) => DataRow(
-                cells: propertyNames
-                    .map((propName) => DataCell(Text(obj[propName])))
-                    .toList()))
-            .toList());
+    var internalState = useState({
+      'asc': true,
+      'sortColumn': null,
+      'objects': jsonObjects,
+    });
+
+    return SingleChildScrollView(
+        child: DataTable(
+            sortAscending: internalState.value['asc'] as bool,
+            sortColumnIndex: internalState.value['sortColumn'] != null
+                ? internalState.value['sortColumn'] as int
+                : null,
+            columns: columnNames
+                .map((name) => DataColumn(
+                    onSort: (index, isAscending) {
+                      final compare =
+                          _compareMaker(propertyNames[index], isAscending);
+                      jsonObjects.sort(compare);
+                      internalState.value = {
+                        'objects': jsonObjects,
+                        'sortColumn': index,
+                        'asc': isAscending
+                      };
+                    },
+                    label: Expanded(
+                        child: Text(name,
+                            style: TextStyle(fontStyle: FontStyle.italic)))))
+                .toList(),
+            rows: jsonObjects
+                .map((obj) => DataRow(
+                    cells: propertyNames
+                        .map((propName) => DataCell(Text(obj[propName])))
+                        .toList()))
+                .toList()));
   }
 }
