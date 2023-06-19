@@ -4,7 +4,7 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 
 import '../data/data_service.dart';
 
-const listNumbers = [3,7,17];
+const listNumbers = [3, 7, 17];
 
 class MyApp extends StatelessWidget {
   @override
@@ -55,7 +55,7 @@ class MyApp extends StatelessWidget {
                 return Text("...");
               }),
           bottomNavigationBar:
-              NewNavBar(itemSelectedCallback: dataService.load),
+              NewNavBar(itemSelectedCallback: dataService.carregar),
         ));
   }
 }
@@ -106,16 +106,12 @@ class DataTableWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return DataTable(
       columns: columnNames
-          .map(
-            (name) => DataColumn(
+          .map((name) => DataColumn(
+              onSort: (columnIndex, ascending) =>
+                  dataService.ordenarEstadoAtual(propertyNames[columnIndex]),
               label: Expanded(
-                child: Text(
-                  name,
-                  style: TextStyle(fontStyle: FontStyle.italic),
-                ),
-              ),
-            ),
-          )
+                  child: Text(name,
+                      style: TextStyle(fontStyle: FontStyle.italic)))))
           .toList(),
       rows: jsonObjects
           .map(
