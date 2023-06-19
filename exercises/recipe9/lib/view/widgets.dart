@@ -4,6 +4,8 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 
 import '../data/data_service.dart';
 
+const listNumbers = [3,7,17];
+
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -13,7 +15,7 @@ class MyApp extends StatelessWidget {
         home: Scaffold(
           appBar: AppBar(title: const Text("Dicas"), actions: [
             PopupMenuButton(
-              itemBuilder: (_) => [3, 7, 15]
+              itemBuilder: (_) => listNumbers
                   .map((num) => PopupMenuItem(
                         value: num,
                         child: Text("Carregar $num itens por vez"),
