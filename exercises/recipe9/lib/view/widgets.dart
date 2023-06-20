@@ -73,7 +73,6 @@ class NewNavBar extends HookWidget {
     return BottomNavigationBar(
         onTap: (index) {
           state.value = index;
-
           _itemSelectedCallback(index);
         },
         currentIndex: state.value,

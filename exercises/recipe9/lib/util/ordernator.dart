@@ -1,6 +1,39 @@
+abstract class Decididor {
+  bool precisaTrocarAtualPeloProximo(dynamic atual, dynamic proximo);
+}
+
 class Ordenador {
-  List ordenarCervejas(List cervejas, int Function(Map, Map) comparador) {
+  List ordenarFuderoso(List objetos, Decididor decididor) {
+    List objetosOrdenados = List.of(objetos);
+
+    bool trocouAoMenosUm;
+
+    do {
+      trocouAoMenosUm = false;
+
+      for (int i = 0; i < objetosOrdenados.length - 1; i++) {
+        var atual = objetosOrdenados[i];
+
+        var proximo = objetosOrdenados[i + 1];
+
+        if (decididor.precisaTrocarAtualPeloProximo(atual, proximo)) {
+          var aux = objetosOrdenados[i];
+
+          objetosOrdenados[i] = objetosOrdenados[i + 1];
+
+          objetosOrdenados[i + 1] = aux;
+
+          trocouAoMenosUm = true;
+        }
+      }
+    } while (trocouAoMenosUm);
+
+    return objetosOrdenados;
+  }
+
+  List ordenarCervejasPorNomeCrescente(List cervejas) {
     List cervejasOrdenadas = List.of(cervejas);
+
     bool trocouAoMenosUm;
 
     do {
@@ -8,12 +41,16 @@ class Ordenador {
 
       for (int i = 0; i < cervejasOrdenadas.length - 1; i++) {
         var atual = cervejasOrdenadas[i];
+
         var proximo = cervejasOrdenadas[i + 1];
 
-        if (comparador(atual, proximo) > 0) {
+        if (atual["name"].compareTo(proximo["name"]) > 0) {
           var aux = cervejasOrdenadas[i];
+
           cervejasOrdenadas[i] = cervejasOrdenadas[i + 1];
+
           cervejasOrdenadas[i + 1] = aux;
+
           trocouAoMenosUm = true;
         }
       }
@@ -22,35 +59,87 @@ class Ordenador {
     return cervejasOrdenadas;
   }
 
-  int compararPorNomeCrescente(Map cerveja1, Map cerveja2) {
-    return cerveja1["name"].compareTo(cerveja2["name"]);
-  }
-
-  int compararPorNomeDecrescente(Map cerveja1, Map cerveja2) {
-    return cerveja2["name"].compareTo(cerveja1["name"]);
-  }
-
-  int compararPorEstiloCrescente(Map cerveja1, Map cerveja2) {
-    return cerveja1["style"].compareTo(cerveja2["style"]);
-  }
-
-  int compararPorEstiloDecrescente(Map cerveja1, Map cerveja2) {
-    return cerveja2["style"].compareTo(cerveja1["style"]);
-  }
-
-  List ordenarCervejasPorNomeCrescente(List cervejas) {
-    return ordenarCervejas(cervejas, compararPorNomeCrescente);
-  }
-
   List ordenarCervejasPorNomeDecrescente(List cervejas) {
-    return ordenarCervejas(cervejas, compararPorNomeDecrescente);
+    List cervejasOrdenadas = List.of(cervejas);
+
+    bool trocouAoMenosUm;
+
+    do {
+      trocouAoMenosUm = false;
+
+      for (int i = 0; i < cervejasOrdenadas.length - 1; i++) {
+        var atual = cervejasOrdenadas[i];
+
+        var proximo = cervejasOrdenadas[i + 1];
+
+        if (atual["name"].compareTo(proximo["name"]) > 0) {
+          var aux = cervejasOrdenadas[i];
+
+          cervejasOrdenadas[i] = cervejasOrdenadas[i + 1];
+
+          cervejasOrdenadas[i + 1] = aux;
+
+          trocouAoMenosUm = true;
+        }
+      }
+    } while (trocouAoMenosUm);
+
+    return cervejasOrdenadas;
   }
 
   List ordenarCervejasPorEstiloCrescente(List cervejas) {
-    return ordenarCervejas(cervejas, compararPorEstiloCrescente);
+    List cervejasOrdenadas = List.of(cervejas);
+
+    bool trocouAoMenosUm;
+
+    do {
+      trocouAoMenosUm = false;
+
+      for (int i = 0; i < cervejasOrdenadas.length - 1; i++) {
+        var atual = cervejasOrdenadas[i];
+
+        var proximo = cervejasOrdenadas[i + 1];
+
+        if (atual["style"].compareTo(proximo["style"]) > 0) {
+          var aux = cervejasOrdenadas[i];
+
+          cervejasOrdenadas[i] = cervejasOrdenadas[i + 1];
+
+          cervejasOrdenadas[i + 1] = aux;
+
+          trocouAoMenosUm = true;
+        }
+      }
+    } while (trocouAoMenosUm);
+
+    return cervejasOrdenadas;
   }
 
   List ordenarCervejasPorEstiloDecrescente(List cervejas) {
-    return ordenarCervejas(cervejas, compararPorEstiloDecrescente);
+    List cervejasOrdenadas = List.of(cervejas);
+
+    bool trocouAoMenosUm;
+
+    do {
+      trocouAoMenosUm = false;
+
+      for (int i = 0; i < cervejasOrdenadas.length - 1; i++) {
+        var atual = cervejasOrdenadas[i];
+
+        var proximo = cervejasOrdenadas[i + 1];
+
+        if (atual["style"].compareTo(proximo["style"]) > 0) {
+          var aux = cervejasOrdenadas[i];
+
+          cervejasOrdenadas[i] = cervejasOrdenadas[i + 1];
+
+          cervejasOrdenadas[i + 1] = aux;
+
+          trocouAoMenosUm = true;
+        }
+      }
+    } while (trocouAoMenosUm);
+
+    return cervejasOrdenadas;
   }
 }
