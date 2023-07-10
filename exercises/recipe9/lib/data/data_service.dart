@@ -12,6 +12,7 @@ enum ItemType {
   beer,
   coffee,
   nation,
+  cannabis,
   none;
 
   String get asString => '$name';
@@ -22,7 +23,9 @@ enum ItemType {
           ? ["Nome", "Estilo", "IBU"]
           : this == nation
               ? ["Nome", "Capital", "Idioma", "Esporte"]
-              : [];
+              : this == cannabis
+                  ? ["Strain", "Health Benefits", "Category"]
+                  : [];
 
   List<String> get properties => this == coffee
       ? ["blend_name", "origin", "variety"]
@@ -30,14 +33,14 @@ enum ItemType {
           ? ["name", "style", "ibu"]
           : this == nation
               ? ["nationality", "capital", "language", "national_sport"]
-              : [];
+              : this == cannabis
+                  ? ["strain", "health_benefit", "category"]
+                  : [];
 }
 
 class DataService {
   static const MAX_N_ITEMS = 15;
-
   static const MIN_N_ITEMS = 3;
-
   static const DEFAULT_N_ITEMS = 7;
 
   int _numberOfItems = DEFAULT_N_ITEMS;
@@ -46,7 +49,7 @@ class DataService {
     return _numberOfItems;
   }
 
-  set numberOfItems(n) {
+  set numberOfItems(int n) {
     _numberOfItems = n < 0
         ? MIN_N_ITEMS
         : n > MAX_N_ITEMS
@@ -60,43 +63,41 @@ class DataService {
     'itemType': ItemType.none
   });
 
-  void carregar(index) {
-    final params = [ItemType.coffee, ItemType.beer, ItemType.nation];
+  void load(int index) {
+    final params = [
+      ItemType.coffee,
+      ItemType.beer,
+      ItemType.nation,
+      ItemType.cannabis,
+    ];
 
-    carregarPorTipo(params[index]);
+    loadByType(params[index]);
   }
 
-  void ordenarEstadoAtual(final String propriedade) {
-    List objetos = tableStateNotifier.value['dataObjects'] ?? [];
+  void sortCurrentState(final String property, bool ascending) {
+    List objects = tableStateNotifier.value['dataObjects'] ?? [];
 
-    if (objetos == []) return;
+    if (objects.isEmpty) return;
 
-    Ordenador ord = Ordenador();
+    objects.sort((a, b) => a[property].compareTo(b[property]));
 
-    var objetosOrdenados = [];
-
-    final type = tableStateNotifier.value['itemType'];
-
-    if (type == ItemType.beer && propriedade == "name") {
-      objetosOrdenados =
-          ord.ordenarFuderoso(objetos, DecididorCervejaNomeCrescente());
-    } else if (type == ItemType.beer && propriedade == "style") {
-      objetosOrdenados =
-          ord.ordenarFuderoso(objetos, DecididorCervejaEstiloCrescente());
+    if (!ascending) {
+      objects = objects.reversed.toList();
     }
 
-    emitirEstadoOrdenado(objetosOrdenados, propriedade);
+    emitSortedState(objects, property, ascending);
   }
 
-  Uri montarUri(ItemType type) {
+  Uri buildUri(ItemType type) {
     return Uri(
-        scheme: 'https',
-        host: 'random-data-api.com',
-        path: 'api/${type.asString}/random_${type.asString}',
-        queryParameters: {'size': '$_numberOfItems'});
+      scheme: 'https',
+      host: 'random-data-api.com',
+      path: 'api/${type.asString}/random_${type.asString}',
+      queryParameters: {'size': '$_numberOfItems'},
+    );
   }
 
-  Future<List<dynamic>> acessarApi(Uri uri) async {
+  Future<List<dynamic>> accessApi(Uri uri) async {
     var jsonString = await http.read(uri);
 
     var json = jsonDecode(jsonString);
@@ -106,19 +107,17 @@ class DataService {
     return json;
   }
 
-  void emitirEstadoOrdenado(List objetosOrdenados, String propriedade) {
-    var estado = Map<String, dynamic>.from(tableStateNotifier.value);
+  void emitSortedState(List sortedObjects, String property, bool ascending) {
+    var state = Map<String, dynamic>.from(tableStateNotifier.value);
 
-    estado['dataObjects'] = objetosOrdenados;
+    state['dataObjects'] = sortedObjects;
+    state['sortColumnIndex'] = property; // Armazena a coluna selecionada
+    state['sortAscending'] = ascending; // Armazena a ordem de classificação
 
-    estado['sortCriteria'] = propriedade;
-
-    estado['ascending'] = true;
-
-    tableStateNotifier.value = estado;
+    tableStateNotifier.value = state;
   }
 
-  void emitirEstadoCarregando(ItemType type) {
+  void emitLoadingState(ItemType type) {
     tableStateNotifier.value = {
       'status': TableStatus.loading,
       'dataObjects': [],
@@ -126,79 +125,50 @@ class DataService {
     };
   }
 
-  void emitirEstadoPronto(ItemType type, var json) {
+  void emitReadyState(ItemType type, var data) {
     tableStateNotifier.value = {
       'itemType': type,
       'status': TableStatus.ready,
-      'dataObjects': json,
+      'dataObjects': data,
       'propertyNames': type.properties,
-      'columnNames': type.columns
+      'columnNames': type.columns,
     };
   }
 
-  bool temRequisicaoEmCurso() =>
+  bool isRequestPending() =>
       tableStateNotifier.value['status'] == TableStatus.loading;
 
-  bool mudouTipoDeItemRequisitado(ItemType type) =>
+  bool hasItemTypeChanged(ItemType type) =>
       tableStateNotifier.value['itemType'] != type;
 
-  void carregarPorTipo(ItemType type) async {
-    //ignorar solicitação se uma requisição já estiver em curso
+  void loadByType(ItemType type) async {
+    // Ignore request if a previous request is still pending
+    if (isRequestPending()) return;
 
-    if (temRequisicaoEmCurso()) return;
-
-    if (mudouTipoDeItemRequisitado(type)) {
-      emitirEstadoCarregando(type);
+    if (hasItemTypeChanged(type)) {
+      emitLoadingState(type);
     }
 
-    var uri = montarUri(type);
+    var uri = buildUri(type);
 
-    var json = await acessarApi(uri);
+    var json = await accessApi(uri);
 
-    emitirEstadoPronto(type, json);
+    emitReadyState(type, json);
   }
 }
 
 final dataService = DataService();
 
-class DecididorCervejaNomeCrescente extends Decididor {
-  @override
-  bool precisaTrocarAtualPeloProximo(atual, proximo) {
-    try {
-      return atual["name"].compareTo(proximo["name"]) > 0;
-    } catch (error) {
-      return false;
-    }
-  }
-}
+class JsonComparator extends Decider {
+  final String property;
+  final bool ascending;
 
-class DecididorCervejaEstiloCrescente extends Decididor {
-  @override
-  bool precisaTrocarAtualPeloProximo(atual, proximo) {
-    try {
-      return atual["style"].compareTo(proximo["style"]) > 0;
-    } catch (error) {
-      return false;
-    }
-  }
-}
+  JsonComparator(this.property, [this.ascending = true]);
 
-class DecididorCervejaNomeDecrescente extends Decididor {
   @override
-  bool precisaTrocarAtualPeloProximo(atual, proximo) {
+  bool needsToSwap(current, next) {
     try {
-      return atual["name"].compareTo(proximo["name"]) < 0;
-    } catch (error) {
-      return false;
-    }
-  }
-}
-
-class DecididorCervejaEstiloDecrescente extends Decididor {
-  @override
-  bool precisaTrocarAtualPeloProximo(atual, proximo) {
-    try {
-      return atual["style"].compareTo(proximo["style"]) < 0;
+      return current[property].compareTo(next[property]) > 0;
     } catch (error) {
       return false;
     }

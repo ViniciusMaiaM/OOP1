@@ -13,28 +13,19 @@ class MyApp extends StatelessWidget {
         theme: ThemeData(primarySwatch: Colors.deepPurple),
         debugShowCheckedModeBanner: false,
         home: Scaffold(
-          appBar: AppBar(title: const Text("Dicas"), actions: [
-            PopupMenuButton(
-              itemBuilder: (_) => listNumbers
-                  .map((num) => PopupMenuItem(
-                        value: num,
-                        child: Text("Carregar $num itens por vez"),
-                      ))
-                  .toList(),
-              onSelected: (number) {
-                dataService.numberOfItems = number;
-              },
-            )
-          ]),
+          appBar: PreferredSize(
+            preferredSize: Size.fromHeight(kToolbarHeight),
+            child: MyAppBar(callback: dataService.sortCurrentState),
+          ),
           body: ValueListenableBuilder(
               valueListenable: dataService.tableStateNotifier,
               builder: (_, value, __) {
                 switch (value['status']) {
                   case TableStatus.idle:
-                    return Center(child: Text("Toque em algum botão"));
+                    return const Center(child: Text("Toque em algum botão"));
 
                   case TableStatus.loading:
-                    return Center(child: CircularProgressIndicator());
+                    return const Center(child: CircularProgressIndicator());
 
                   case TableStatus.ready:
                     return SingleChildScrollView(
@@ -55,7 +46,7 @@ class MyApp extends StatelessWidget {
                 return Text("...");
               }),
           bottomNavigationBar:
-              NewNavBar(itemSelectedCallback: dataService.carregar),
+              NewNavBar(itemSelectedCallback: dataService.load),
         ));
   }
 }
@@ -71,6 +62,7 @@ class NewNavBar extends HookWidget {
     var state = useState(0);
 
     return BottomNavigationBar(
+        type: BottomNavigationBarType.fixed,
         onTap: (index) {
           state.value = index;
           _itemSelectedCallback(index);
@@ -84,30 +76,41 @@ class NewNavBar extends HookWidget {
           BottomNavigationBarItem(
               label: "Cervejas", icon: Icon(Icons.local_drink_outlined)),
           BottomNavigationBarItem(
-              label: "Nações", icon: Icon(Icons.flag_outlined))
+              label: "Nações", icon: Icon(Icons.flag_outlined)),
+          BottomNavigationBarItem(
+            label: "Weed",
+            icon: Icon(Icons.forest),
+          )
         ]);
   }
 }
 
-class DataTableWidget extends StatelessWidget {
+class DataTableWidget extends HookWidget {
   final List jsonObjects;
-
   final List<String> columnNames;
-
   final List<String> propertyNames;
 
-  DataTableWidget(
-      {this.jsonObjects = const [],
-      this.columnNames = const [],
-      this.propertyNames = const []});
+  DataTableWidget({
+    this.jsonObjects = const [],
+    this.columnNames = const [],
+    this.propertyNames = const [],
+  });
 
   @override
   Widget build(BuildContext context) {
+    final sortAsceding = useState(true);
+    final sortColumnIndex = useState(1);
     return DataTable(
+      sortAscending: sortAsceding.value,
+      sortColumnIndex: sortColumnIndex.value,
       columns: columnNames
           .map((name) => DataColumn(
-              onSort: (columnIndex, ascending) =>
-                  dataService.ordenarEstadoAtual(propertyNames[columnIndex]),
+              onSort: (columnIndex, ascending) {
+                sortColumnIndex.value = columnIndex;
+                sortAsceding.value = !sortAsceding.value;
+                dataService.sortCurrentState(
+                    propertyNames[columnIndex], sortAsceding.value);
+              },
               label: Expanded(
                   child: Text(name,
                       style: TextStyle(fontStyle: FontStyle.italic)))))
@@ -126,5 +129,50 @@ class DataTableWidget extends StatelessWidget {
           )
           .toList(),
     );
+  }
+  // List<DataRow> buildDataRows() {
+  //   return jsonObjects.map((obj) {
+  //     final cells = propertyNames
+  //         .map((propName) => DataCell(Text(obj[propName])))
+  //         .toList();
+  //     return DataRow(cells: cells);
+  //   }).toList();
+  // }
+}
+
+class MyAppBar extends HookWidget {
+  final callback;
+
+  MyAppBar({this.callback});
+
+  @override
+  Widget build(BuildContext context) {
+    var state = useState(7);
+
+    return AppBar(actions: [
+      Flexible(
+        child: TextField(
+          onChanged: (value) {
+            callback(value);
+          },
+          decoration: const InputDecoration(
+            hintText: 'Digite algo...',
+          ),
+        ),
+      ),
+      PopupMenuButton(
+        initialValue: state.value,
+        itemBuilder: (_) => listNumbers
+            .map((num) => PopupMenuItem(
+                  value: num,
+                  child: Text("Carregar $num itens por vez"),
+                ))
+            .toList(),
+        onSelected: (number) {
+          state.value = number;
+          dataService.numberOfItems = number;
+        },
+      )
+    ]);
   }
 }
