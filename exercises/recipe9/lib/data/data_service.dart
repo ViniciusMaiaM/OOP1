@@ -74,6 +74,25 @@ class DataService {
     loadByType(params[index]);
   }
 
+  List<dynamic> filterCurrentState(String search) {
+    List<dynamic> objects = tableStateNotifier.value['dataObjects'] ?? [];
+
+    if (search.isEmpty) return objects;
+
+    return objects.where((obj) {
+      // Filtra os objetos com base em uma correspondência parcial do valor da propriedade com a pesquisa
+      for (var property in tableStateNotifier.value['propertyNames']) {
+        if (obj[property]
+            .toString()
+            .toLowerCase()
+            .contains(search.toLowerCase())) {
+          return true;
+        }
+      }
+      return false;
+    }).toList();
+  }
+
   void sortCurrentState(final String property, bool ascending) {
     List objects = tableStateNotifier.value['dataObjects'] ?? [];
 

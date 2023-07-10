@@ -7,6 +7,12 @@ import '../data/data_service.dart';
 const listNumbers = [3, 7, 17];
 
 class MyApp extends StatelessWidget {
+  void handleSearch(String search) {
+    var state = Map<String, dynamic>.from(dataService.tableStateNotifier.value);
+    state['dataObjects'] = dataService.filterCurrentState(search);
+    dataService.tableStateNotifier.value = state;
+  }
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -15,7 +21,10 @@ class MyApp extends StatelessWidget {
         home: Scaffold(
           appBar: PreferredSize(
             preferredSize: Size.fromHeight(kToolbarHeight),
-            child: MyAppBar(callback: dataService.sortCurrentState),
+            child: MyAppBar(
+                callback: dataService.sortCurrentState,
+                searchCallback:
+                    handleSearch), // Atualiza o construtor do MyAppBar
           ),
           body: ValueListenableBuilder(
               valueListenable: dataService.tableStateNotifier,
@@ -142,18 +151,24 @@ class DataTableWidget extends HookWidget {
 
 class MyAppBar extends HookWidget {
   final callback;
+  final searchCallback;
 
-  MyAppBar({this.callback});
+  MyAppBar({this.callback, this.searchCallback});
 
   @override
   Widget build(BuildContext context) {
     var state = useState(7);
+    var searchState = useState('');
 
     return AppBar(actions: [
       Flexible(
         child: TextField(
           onChanged: (value) {
-            callback(value);
+            searchState.value = value;
+            if (searchState.value.length >= 3) {
+              searchCallback(
+                  searchState.value); // Chama o retorno de chamada de pesquisa
+            }
           },
           decoration: const InputDecoration(
             hintText: 'Digite algo...',
