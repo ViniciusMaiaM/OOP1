@@ -6,6 +6,8 @@ import 'dart:convert';
 
 import '../util/ordernator.dart';
 
+import '../data/models.dart';
+
 enum TableStatus { idle, loading, ready, error }
 
 enum ItemType {
@@ -116,17 +118,38 @@ class DataService {
     );
   }
 
-  Future<List<dynamic>> accessApi(Uri uri) async {
+  Future<List<dynamic>> accessApi(Uri uri, ItemType type) async {
     var jsonString = await http.read(uri);
 
     var json = jsonDecode(jsonString);
 
-    json = [...tableStateNotifier.value['dataObjects'], ...json];
+    List<dynamic> items;
 
-    return json;
+    switch (type) {
+      case ItemType.beer:
+        items = json.map<Beer>((itemJson) => Beer.fromJson(itemJson)).toList();
+        break;
+      case ItemType.coffee:
+        items =
+            json.map<Coffee>((itemJson) => Coffee.fromJson(itemJson)).toList();
+        break;
+      case ItemType.nation:
+        items =
+            json.map<Nation>((itemJson) => Nation.fromJson(itemJson)).toList();
+        break;
+      case ItemType.cannabis:
+        items = json
+            .map<Cannabis>((itemJson) => Cannabis.fromJson(itemJson))
+            .toList();
+        break;
+      default:
+        items = [];
+    }
+
+    return [...tableStateNotifier.value['dataObjects'], ...items];
   }
 
-  void emitSortedState(List sortedObjects, String property, bool ascending) {
+  void emitSortedState(List<dynamic> sortedObjects, String property, bool ascending) {
     var state = Map<String, dynamic>.from(tableStateNotifier.value);
 
     state['dataObjects'] = sortedObjects;
@@ -144,7 +167,7 @@ class DataService {
     };
   }
 
-  void emitReadyState(ItemType type, var data) {
+  void emitReadyState(ItemType type, List<dynamic> data) {
     tableStateNotifier.value = {
       'itemType': type,
       'status': TableStatus.ready,
@@ -170,7 +193,7 @@ class DataService {
 
     var uri = buildUri(type);
 
-    var json = await accessApi(uri);
+    var json = await accessApi(uri, type);
 
     emitReadyState(type, json);
   }
