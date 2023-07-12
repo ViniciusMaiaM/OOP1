@@ -7,6 +7,10 @@ import '../data/data_service.dart';
 const listNumbers = [3, 7, 17];
 
 class MyApp extends StatelessWidget {
+  void handlePreviousState() {
+    dataService.changeAtualState();
+  }
+
   void handleSearch(String search) {
     var state = Map<String, dynamic>.from(dataService.tableStateNotifier.value);
     state['dataObjects'] = dataService.filterCurrentState(search);
@@ -22,9 +26,10 @@ class MyApp extends StatelessWidget {
           appBar: PreferredSize(
             preferredSize: Size.fromHeight(kToolbarHeight),
             child: MyAppBar(
-                callback: dataService.sortCurrentState,
-                searchCallback:
-                    handleSearch), // Atualiza o construtor do MyAppBar
+              callback: dataService.sortCurrentState,
+              searchCallback: handleSearch,
+              backButtonCallback: handlePreviousState,
+            ), // Atualiza o construtor do MyAppBar
           ),
           body: ValueListenableBuilder(
               valueListenable: dataService.tableStateNotifier,
@@ -152,42 +157,37 @@ class DataTableWidget extends HookWidget {
 class MyAppBar extends HookWidget {
   final callback;
   final searchCallback;
+  final backButtonCallback;
 
-  MyAppBar({this.callback, this.searchCallback});
+  MyAppBar({this.callback, this.searchCallback, this.backButtonCallback});
 
   @override
   Widget build(BuildContext context) {
     var state = useState(7);
     var searchState = useState('');
 
-    return AppBar(actions: [
-      Flexible(
-        child: TextField(
-          onChanged: (value) {
-            searchState.value = value;
-            if (searchState.value.length >= 3) {
-              searchCallback(
-                  searchState.value); // Chama o retorno de chamada de pesquisa
-            }
-          },
-          decoration: const InputDecoration(
-            hintText: 'Digite algo...',
-          ),
-        ),
+    return AppBar(
+      leading: IconButton(
+        icon: Icon(Icons.arrow_back),
+        onPressed: backButtonCallback,
       ),
-      PopupMenuButton(
-        initialValue: state.value,
-        itemBuilder: (_) => listNumbers
-            .map((num) => PopupMenuItem(
+      actions: [
+        PopupMenuButton(
+          initialValue: state.value,
+          itemBuilder: (_) => listNumbers
+              .map(
+                (num) => PopupMenuItem(
                   value: num,
                   child: Text("Carregar $num itens por vez"),
-                ))
-            .toList(),
-        onSelected: (number) {
-          state.value = number;
-          dataService.numberOfItems = number;
-        },
-      )
-    ]);
+                ),
+              )
+              .toList(),
+          onSelected: (number) {
+            state.value = number;
+            dataService.numberOfItems = number;
+          },
+        )
+      ],
+    );
   }
 }
