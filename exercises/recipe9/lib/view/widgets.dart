@@ -167,6 +167,28 @@ class MyAppBar extends HookWidget {
     var searchState = useState('');
 
     return AppBar(
+      title: Container(
+        margin: const EdgeInsets.only(top: 2.0),
+        padding: const EdgeInsets.symmetric(horizontal: 10.0),
+        constraints: const BoxConstraints(maxHeight: 40.0),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(25.0),
+        ),
+        child: TextField(
+          onChanged: (value) {
+            searchState.value = value;
+            if (searchState.value.length >= 3) {
+              searchCallback(searchState.value);
+            }
+          },
+          decoration: const InputDecoration(
+            hintText: 'Digite algo...',
+            border: InputBorder.none,
+            prefixIcon: Icon(Icons.search),
+          ),
+        ),
+      ),
       leading: IconButton(
         icon: Icon(Icons.arrow_back),
         onPressed: backButtonCallback,
