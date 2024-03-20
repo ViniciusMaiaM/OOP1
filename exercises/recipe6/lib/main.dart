@@ -18,7 +18,7 @@ class MyApp extends StatelessWidget {
             title: const Text("Inputs"),
           ),
           body: const MyCustomForm(),
-          bottomNavigationBar: NewNavBar(icons: const [
+          bottomNavigationBar: const NewNavBar(icons: [
             Icons.ac_unit,
             Icons.access_alarm,
             Icons.accessibility
@@ -29,7 +29,7 @@ class MyApp extends StatelessWidget {
 
 class NewNavBar extends StatelessWidget {
   final List icons;
-  NewNavBar({required this.icons});
+  const NewNavBar({super.key, required this.icons});
 
   @override
   Widget build(BuildContext context) {
@@ -63,22 +63,22 @@ class MyCustomFormState extends State<MyCustomForm> {
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           // Creating the input field for the name
-          Padding(
-            padding: const EdgeInsets.all(16.0), // Add padding here
+          const Padding(
+            padding: EdgeInsets.all(16.0), // Add padding here
             child: MyNameInput(),
           ),
           // Creating the input field for the password
-          Padding(
-            padding: const EdgeInsets.all(16.0),
+          const Padding(
+            padding: EdgeInsets.all(16.0),
             child: MyPasswordInput(),
           ),
           // Creating the DropdownButton field
-          Padding(
-            padding: const EdgeInsets.all(16.0),
+          const Padding(
+            padding: EdgeInsets.all(16.0),
             child: MyDropdownInput(),
           ),
-          Padding(
-            padding: const EdgeInsets.all(16.0),
+          const Padding(
+            padding: EdgeInsets.all(16.0),
             child: MySlideInput(),
           ),
           Padding(
@@ -101,7 +101,7 @@ class MyCustomFormState extends State<MyCustomForm> {
 }
 
 class MyNameInput extends StatelessWidget {
-  MyNameInput();
+  const MyNameInput({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -114,6 +114,7 @@ class MyNameInput extends StatelessWidget {
         } else if (!regExp.hasMatch(value)) {
           return "O nome deve conter caracteres de a-z ou A-Z";
         }
+        return null;
       },
       decoration: const InputDecoration(
         border: OutlineInputBorder(),
@@ -124,6 +125,8 @@ class MyNameInput extends StatelessWidget {
 }
 
 class MyPasswordInput extends StatefulWidget {
+  const MyPasswordInput({super.key});
+
   @override
   _MyPasswordInputState createState() => _MyPasswordInputState();
 }
@@ -161,6 +164,8 @@ class _MyPasswordInputState extends State<MyPasswordInput> {
 }
 
 class MyDropdownInput extends StatefulWidget {
+  const MyDropdownInput({super.key});
+
   @override
   _MyDropdownInputState createState() => _MyDropdownInputState();
 }
@@ -199,6 +204,8 @@ class _MyDropdownInputState extends State<MyDropdownInput> {
 }
 
 class MySlideInput extends StatefulWidget {
+  const MySlideInput({super.key});
+
   @override
   _MySlideInputState createState() => _MySlideInputState();
 }

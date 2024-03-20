@@ -64,12 +64,14 @@ class DataService {
 final dataService = DataService();
 
 void main() {
-  MyApp app = MyApp();
+  MyApp app = const MyApp();
 
   runApp(app);
 }
 
 class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -95,7 +97,7 @@ class NewNavBar extends HookWidget {
   var itemSelectedCallback;
   // Function to create relationship between the class and the 'carregarCervejas'
 
-  NewNavBar({this.itemSelectedCallback}) {
+  NewNavBar({super.key, this.itemSelectedCallback}) {
     itemSelectedCallback ??= (_) {};
   }
 
@@ -125,7 +127,7 @@ class NewNavBar extends HookWidget {
 class DataTableWidget extends StatelessWidget {
   final List jsonObjects;
 
-  DataTableWidget({required this.jsonObjects});
+  const DataTableWidget({super.key, required this.jsonObjects});
 
   @override
   Widget build(BuildContext context) {

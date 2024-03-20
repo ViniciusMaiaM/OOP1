@@ -20,12 +20,14 @@ var dataObjects = [
 ];
 
 void main() {
-  MyApp app = MyApp();
+  MyApp app = const MyApp();
 
   runApp(app);
 }
 
 class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -36,14 +38,14 @@ class MyApp extends StatelessWidget {
             title: const Text("Dicas"),
           ),
           body: MytileWidget(
-              objects: dataObjects, propertyNames: ['Style', 'Ibu']),
-          bottomNavigationBar: NewNavBar(),
+              objects: dataObjects, propertyNames: const ['Style', 'Ibu']),
+          bottomNavigationBar: const NewNavBar(),
         ));
   }
 }
 
 class NewNavBar extends StatelessWidget {
-  NewNavBar();
+  const NewNavBar({super.key});
 
   void botaoFoiTocado(int index) {
     print("Tocaram no botão $index");
@@ -69,7 +71,7 @@ class DataBodyWidget extends StatelessWidget {
   List collumnNames;
 
   DataBodyWidget(
-      {this.objects = const [],
+      {super.key, this.objects = const [],
       this.propertyNames = const [],
       this.collumnNames = const []});
 
@@ -82,7 +84,7 @@ class DataBodyWidget extends StatelessWidget {
                 .map((name) => DataColumn(
                     label: Expanded(
                         child: Text(name,
-                            style: TextStyle(fontStyle: FontStyle.italic)))))
+                            style: const TextStyle(fontStyle: FontStyle.italic)))))
                 .toList(),
             rows: objects
                 .map((obj) => DataRow(
@@ -99,7 +101,7 @@ class MytileWidget extends StatelessWidget {
   List objects;
   List propertyNames;
 
-  MytileWidget({this.objects = const [], this.propertyNames = const []});
+  MytileWidget({super.key, this.objects = const [], this.propertyNames = const []});
 
   @override
   Widget build(BuildContext context) {

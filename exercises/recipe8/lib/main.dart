@@ -132,12 +132,14 @@ class DataService {
 final dataService = DataService();
 
 void main() {
-  MyApp app = MyApp();
+  MyApp app = const MyApp();
 
   runApp(app);
 }
 
 class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -156,9 +158,9 @@ class MyApp extends StatelessWidget {
                   builder: (_, value, __) {
                     switch (value['status']) {
                       case TableStatus.idle:
-                        return Row(
+                        return const Row(
                             mainAxisAlignment: MainAxisAlignment.center,
-                            children: const [
+                            children: [
                               Text(
                                 "Bem-vindo ao meu aplicativo! Toque um dos botões abaixo para começar",
                                 style: TextStyle(fontSize: 14.0),
@@ -168,7 +170,7 @@ class MyApp extends StatelessWidget {
                             ]);
 
                       case TableStatus.loading:
-                        return CircularProgressIndicator();
+                        return const CircularProgressIndicator();
 
                       case TableStatus.ready:
                         return DataTableWidget(
@@ -177,9 +179,9 @@ class MyApp extends StatelessWidget {
                             columnNames: value['columnNames']);
 
                       case TableStatus.error:
-                        return Row(
+                        return const Row(
                             mainAxisAlignment: MainAxisAlignment.center,
-                            children: const [
+                            children: [
                               Text(
                                 "Lascou",
                                 style: TextStyle(fontSize: 14.0),
@@ -189,7 +191,7 @@ class MyApp extends StatelessWidget {
                             ]);
                     }
 
-                    return Text("...");
+                    return const Text("...");
                   }),
             ],
           )),
@@ -202,8 +204,8 @@ class MyApp extends StatelessWidget {
 class NewNavBar extends HookWidget {
   final _itemSelectedCallback;
 
-  NewNavBar({itemSelectedCallback})
-      : _itemSelectedCallback = itemSelectedCallback ?? (int) {}
+  const NewNavBar({super.key, itemSelectedCallback})
+      : _itemSelectedCallback = itemSelectedCallback ?? (int);
 
   @override
   Widget build(BuildContext context) {
@@ -238,8 +240,8 @@ class DataTableWidget extends HookWidget {
 
   final List<String> propertyNames;
 
-  DataTableWidget(
-      {this.jsonObjects = const [],
+  const DataTableWidget(
+      {super.key, this.jsonObjects = const [],
       this.columnNames = const ["Nome", "Estilo", "IBU"],
       this.propertyNames = const ["name", "style", "ibu"]});
 
@@ -277,7 +279,7 @@ class DataTableWidget extends HookWidget {
                     },
                     label: Expanded(
                         child: Text(name,
-                            style: TextStyle(fontStyle: FontStyle.italic)))))
+                            style: const TextStyle(fontStyle: FontStyle.italic)))))
                 .toList(),
             rows: jsonObjects
                 .map((obj) => DataRow(

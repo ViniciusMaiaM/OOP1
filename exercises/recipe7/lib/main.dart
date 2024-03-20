@@ -9,10 +9,10 @@ import 'dart:convert';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 
 class DataService {
-  final ValueNotifier<List> tableStateNotifier = new ValueNotifier([]);
-  final ValueNotifier<List<String>> columnNamesNotifier = new ValueNotifier([]);
+  final ValueNotifier<List> tableStateNotifier = ValueNotifier([]);
+  final ValueNotifier<List<String>> columnNamesNotifier = ValueNotifier([]);
   final ValueNotifier<List<String>> propertyNamesNotifier =
-      new ValueNotifier([]);
+      ValueNotifier([]);
 
   int _bodySize = 5;
 
@@ -91,12 +91,14 @@ class DataService {
 final dataService = DataService();
 
 void main() {
-  MyApp app = MyApp();
+  MyApp app = const MyApp();
 
   runApp(app);
 }
 
 class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -149,8 +151,8 @@ class MyApp extends StatelessWidget {
 class NewNavBar extends HookWidget {
   final _itemSelectedCallback;
 
-  NewNavBar({itemSelectedCallback})
-      : _itemSelectedCallback = itemSelectedCallback ?? (int) {}
+  const NewNavBar({super.key, itemSelectedCallback})
+      : _itemSelectedCallback = itemSelectedCallback ?? (int);
 
   @override
   Widget build(BuildContext context) {
@@ -179,7 +181,7 @@ class NewNavBar extends HookWidget {
 class DataTableWidget extends StatelessWidget {
   final List jsonObjects;
 
-  DataTableWidget({required this.jsonObjects});
+  const DataTableWidget({super.key, required this.jsonObjects});
 
   @override
   Widget build(BuildContext context) {

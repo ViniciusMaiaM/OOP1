@@ -4,9 +4,9 @@ void main() {
   MaterialApp app = MaterialApp(
       theme: ThemeData(primarySwatch: Colors.deepPurple),
       home: Scaffold(
-        appBar: NewAppBar(),
-        body: NewArticle(),
-        bottomNavigationBar: NewNavBar(icons: [
+        appBar: const NewAppBar(),
+        body: const NewArticle(),
+        bottomNavigationBar: NewNavBar(icons: const [
           Icon(Icons.abc),
           Icon(Icons.ac_unit),
           Icon(Icons.access_alarm),
@@ -19,7 +19,7 @@ void main() {
 
 class NewNavBar extends StatelessWidget {
   List<Icon> icons;
-  NewNavBar({this.icons = const []});
+  NewNavBar({super.key, this.icons = const []});
 
   void touchedButton(int index) {
     print("Touched: $index");
@@ -36,14 +36,14 @@ class NewNavBar extends StatelessWidget {
 }
 
 class NewArticle extends StatelessWidget {
-  NewArticle();
+  const NewArticle({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Center(
+    return const Center(
         child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
-            children: const [
+            children: [
           Expanded(
             child: Text("La Fin Du Monde - Bock - 65 ibu"),
           ),
@@ -58,7 +58,7 @@ class NewArticle extends StatelessWidget {
 }
 
 class NewAppBar extends StatelessWidget implements PreferredSizeWidget {
-  NewAppBar();
+  const NewAppBar({super.key});
 
   @override
   Widget build(BuildContext context) {

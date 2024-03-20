@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 
 void main() {
-  MyApp app = MyApp();
+  MyApp app = const MyApp();
   runApp(app);
 }
 
 class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -18,7 +20,7 @@ class MyApp extends StatelessWidget {
             "Sapporo Premiume - Sour Ale - 54 ibu",
             "Duvel - Pilsner - 82 ibu"
           ]),
-          bottomNavigationBar: NewNavBar(icons: const [
+          bottomNavigationBar: const NewNavBar(icons: [
             Icons.ac_unit,
             Icons.access_alarm,
             Icons.accessibility
@@ -29,7 +31,7 @@ class MyApp extends StatelessWidget {
 
 class NewNavBar extends StatelessWidget {
   final List icons;
-  NewNavBar({required this.icons});
+  const NewNavBar({super.key, required this.icons});
 
   @override
   Widget build(BuildContext context) {
@@ -44,7 +46,7 @@ class NewNavBar extends StatelessWidget {
 class DataBodyWidget extends StatelessWidget {
   List<String> objects;
 
-  DataBodyWidget({this.objects = const []});
+  DataBodyWidget({super.key, this.objects = const []});
 
   Expanded processarUmElemento(String obj) {
     return Expanded(
@@ -64,6 +66,8 @@ class DataBodyWidget extends StatelessWidget {
 }
 
 class MyAppBar extends StatelessWidget implements PreferredSizeWidget {
+  MyAppBar({super.key});
+
   @override
   Size get preferredSize => const Size.fromHeight(kToolbarHeight);
 

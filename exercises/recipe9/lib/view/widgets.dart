@@ -7,6 +7,8 @@ import '../data/data_service.dart';
 const listNumbers = [3, 7, 17];
 
 class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
   void handlePreviousState() {
     dataService.changeAtualState();
   }
@@ -24,7 +26,7 @@ class MyApp extends StatelessWidget {
         debugShowCheckedModeBanner: false,
         home: Scaffold(
           appBar: PreferredSize(
-            preferredSize: Size.fromHeight(kToolbarHeight),
+            preferredSize: const Size.fromHeight(kToolbarHeight),
             child: MyAppBar(
               callback: dataService.sortCurrentState,
               searchCallback: handleSearch,
@@ -54,10 +56,10 @@ class MyApp extends StatelessWidget {
                         ));
 
                   case TableStatus.error:
-                    return Text("Lascou");
+                    return const Text("Lascou");
                 }
 
-                return Text("...");
+                return const Text("...");
               }),
           bottomNavigationBar:
               NewNavBar(itemSelectedCallback: dataService.load),
@@ -68,8 +70,8 @@ class MyApp extends StatelessWidget {
 class NewNavBar extends HookWidget {
   final _itemSelectedCallback;
 
-  NewNavBar({itemSelectedCallback})
-      : _itemSelectedCallback = itemSelectedCallback ?? (int) {}
+  const NewNavBar({super.key, itemSelectedCallback})
+      : _itemSelectedCallback = itemSelectedCallback ?? (int);
 
   @override
   Widget build(BuildContext context) {
@@ -104,7 +106,7 @@ class DataTableWidget extends HookWidget {
   final List<String> columnNames;
   final List<String> propertyNames;
 
-  DataTableWidget({
+  const DataTableWidget({super.key, 
     this.jsonObjects = const [],
     this.columnNames = const [],
     this.propertyNames = const [],
@@ -127,7 +129,7 @@ class DataTableWidget extends HookWidget {
               },
               label: Expanded(
                   child: Text(name,
-                      style: TextStyle(fontStyle: FontStyle.italic)))))
+                      style: const TextStyle(fontStyle: FontStyle.italic)))))
           .toList(),
       rows: jsonObjects
           .map(
@@ -159,7 +161,7 @@ class MyAppBar extends HookWidget {
   final searchCallback;
   final backButtonCallback;
 
-  MyAppBar({this.callback, this.searchCallback, this.backButtonCallback});
+  const MyAppBar({super.key, this.callback, this.searchCallback, this.backButtonCallback});
 
   @override
   Widget build(BuildContext context) {
@@ -190,7 +192,7 @@ class MyAppBar extends HookWidget {
         ),
       ),
       leading: IconButton(
-        icon: Icon(Icons.arrow_back),
+        icon: const Icon(Icons.arrow_back),
         onPressed: backButtonCallback,
       ),
       actions: [

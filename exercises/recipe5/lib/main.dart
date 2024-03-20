@@ -4,12 +4,14 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 var dataObjects = [];
 
 void main() {
-  MyApp app = MyApp();
+  MyApp app = const MyApp();
 
   runApp(app);
 }
 
 class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
   @override
   Widget build(BuildContext context) {
     print("in build of MyApp");
@@ -21,13 +23,13 @@ class MyApp extends StatelessWidget {
             title: const Text("Dicas"),
           ),
           body: DataTableWidget(jsonObjects: dataObjects),
-          bottomNavigationBar: NewNavBar2(),
+          bottomNavigationBar: const NewNavBar2(),
         ));
   }
 }
 
 class NewNavBar extends HookWidget {
-  NewNavBar();
+  const NewNavBar({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -55,7 +57,7 @@ class NewNavBar extends HookWidget {
 class DataTableWidget extends StatelessWidget {
   final List jsonObjects;
 
-  DataTableWidget({this.jsonObjects = const []});
+  const DataTableWidget({super.key, this.jsonObjects = const []});
 
   @override
   Widget build(BuildContext context) {
@@ -68,7 +70,7 @@ class DataTableWidget extends StatelessWidget {
             .map((name) => DataColumn(
                 label: Expanded(
                     child: Text(name,
-                        style: TextStyle(fontStyle: FontStyle.italic)))))
+                        style: const TextStyle(fontStyle: FontStyle.italic)))))
             .toList(),
         rows: jsonObjects
             .map((obj) => DataRow(
@@ -80,6 +82,8 @@ class DataTableWidget extends StatelessWidget {
 }
 
 class NewNavBar2 extends StatefulWidget {
+  const NewNavBar2({super.key});
+
   @override
   _NewNavBar2State createState() => _NewNavBar2State();
 }

@@ -4,11 +4,11 @@ void main() {
   MaterialApp app = MaterialApp(
     theme: ThemeData(primarySwatch: Colors.purple),
     home: Scaffold(
-        appBar: AppBar(title: Text("Hello World")),
-        body: Center(child: Column(children: [])),
+        appBar: AppBar(title: const Text("Hello World")),
+        body: const Center(child: Column(children: [])),
         bottomNavigationBar: BottomNavigationBar(
           currentIndex: 0,
-          items: [
+          items: const [
             BottomNavigationBarItem(
               icon: Icon(Icons.call),
               label: 'Call',

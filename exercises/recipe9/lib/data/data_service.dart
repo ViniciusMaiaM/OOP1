@@ -1,5 +1,3 @@
-import 'dart:ffi';
-
 import 'package:flutter/material.dart';
 
 import 'package:http/http.dart' as http;
@@ -19,7 +17,7 @@ enum ItemType {
   cannabis,
   none;
 
-  String get asString => '$name';
+  String get asString => name;
 
   List<String> get columns => this == coffee
       ? ["Nome", "Origem", "Tipo"]

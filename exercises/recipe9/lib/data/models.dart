@@ -7,13 +7,13 @@ class Beer {
         ibu = json['ibu'] ?? '';
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = Map<String, dynamic>();
+    final Map<String, dynamic> data = <String, dynamic>{};
 
-    data['name'] = this.name;
+    data['name'] = name;
 
-    data['style'] = this.style;
+    data['style'] = style;
 
-    data['ibu'] = this.ibu;
+    data['ibu'] = ibu;
 
     return data;
   }
@@ -53,13 +53,13 @@ class Coffee {
         variety = json['variety'] ?? '';
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = Map<String, dynamic>();
+    final Map<String, dynamic> data = <String, dynamic>{};
 
-    data['blend_name'] = this.blendName;
+    data['blend_name'] = blendName;
 
-    data['origin'] = this.origin;
+    data['origin'] = origin;
 
-    data['variety'] = this.variety;
+    data['variety'] = variety;
 
     return data;
   }
@@ -102,15 +102,15 @@ class Nation {
         nationalSport = json['national_sport'] ?? '';
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = Map<String, dynamic>();
+    final Map<String, dynamic> data = <String, dynamic>{};
 
-    data['nationality'] = this.nationality;
+    data['nationality'] = nationality;
 
-    data['capital'] = this.capital;
+    data['capital'] = capital;
 
-    data['language'] = this.language;
+    data['language'] = language;
 
-    data['national_sport'] = this.nationalSport;
+    data['national_sport'] = nationalSport;
 
     return data;
   }
@@ -158,11 +158,11 @@ class Cannabis {
         category = json['category'] ?? '';
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = Map<String, dynamic>();
+    final Map<String, dynamic> data = <String, dynamic>{};
 
-    data['strain'] = this.strain;
-    data['health_benefit'] = this.health_benefit;
-    data['category'] = this.category;
+    data['strain'] = strain;
+    data['health_benefit'] = health_benefit;
+    data['category'] = category;
 
     return data;
   }

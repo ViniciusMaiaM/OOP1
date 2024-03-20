@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'view/widgets.dart';
 
 void main() {
-  MyApp app = MyApp();
+  MyApp app = const MyApp();
 
   runApp(app);
 }
