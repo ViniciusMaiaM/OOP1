@@ -41,7 +41,7 @@ class MyHomePage extends StatelessWidget {
               const Text("No meio..."),
               const Text("Terminando..."),
               FadeInImage.assetNetwork(
-                placeholder: 'assets/placeholder.jpg',
+                placeholder: 'assets/images/placeholder.jpg',
                 image: 'https://picsum.photos/250?image=4',
                 fit: BoxFit.cover,
                 width: 250,
@@ -49,7 +49,9 @@ class MyHomePage extends StatelessWidget {
               ),
             ],
           ),
-        ));
+        ),
+        bottomNavigationBar: NewNavBar(),)
+        ;
   }
 }
 
