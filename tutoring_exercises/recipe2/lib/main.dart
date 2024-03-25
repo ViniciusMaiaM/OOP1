@@ -28,6 +28,7 @@ class NewNavBar extends StatelessWidget {
 void main() {
   MaterialApp app = MaterialApp(
     theme: ThemeData(primarySwatch: Colors.deepPurple),
+    debugShowCheckedModeBanner: false,
     home: Scaffold(
       appBar: CustomAppBar(),
       body: const BodyContent(),
@@ -36,7 +37,6 @@ void main() {
           NavBarItem(icon: const Icon(Icons.abc), label: 'Label 1'),
           NavBarItem(icon: const Icon(Icons.ac_unit), label: 'Label 2'),
           NavBarItem(icon: const Icon(Icons.access_alarm), label: 'Label 3'),
-          NavBarItem(icon: const Icon(Icons.accessibility), label: 'Label 4'),
         ],
         onTap: (index) {
           print("Tapped on item $index");
@@ -71,9 +71,17 @@ class BodyContent extends StatelessWidget {
   }
 }
 
-class CustomAppBar extends AppBar {
-  CustomAppBar({super.key})
-      : super(
-          title: const Text("Dicas"),
-        );
+class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
+  const CustomAppBar({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return AppBar(
+      title: const Text("Dicas"),
+      centerTitle: true,
+    );
+  }
+
+  @override
+  Size get preferredSize => const Size.fromHeight(kToolbarHeight);
 }
